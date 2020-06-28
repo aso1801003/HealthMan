@@ -1,0 +1,199 @@
+<!DOCTYPE HTML>
+<html>
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, viewport-fit=cover">
+  <meta http-equiv="Content-Security-Policy" content="default-src * data: gap: https://ssl.gstatic.com; style-src * 'unsafe-inline'; script-src * 'unsafe-inline' 'unsafe-eval'">
+  <script src="components/loader.js"></script>
+  <script src="lib/onsenui/js/onsenui.min.js"></script>
+  <link rel="stylesheet" href="components/loader.css">
+  <link rel="stylesheet" href="lib/onsenui/css/onsenui.css">
+  <link rel="stylesheet" href="lib/onsenui/css/onsen-css-components.css">
+  <link rel="stylesheet" href="css/style.css">
+
+<!--処理-->
+  <script>
+    document.addEventListener('init', function(event) {
+      var page = event.target;
+
+      //ホームページの処理
+      if (page.matches('#home-page')) {
+        //スケジュールボタン押下
+        page.querySelector('#schedule-button').onclick = function() {
+          //htmlを表示
+          document.querySelector('#navigator').pushPage('schedule.html');
+        };
+        //目標管理押下
+        page.querySelector('#goal-button').onclick = function(){
+          document.querySelector('#navigator').pushPage('goal.html');
+        };
+        //ボディチェック押下
+        page.querySelector('#weight-button').onclick = function(){
+          document.querySelector('#navigator').pushPage('weight.html');
+        };
+        //アルバム押下
+        page.querySelector('#album-button').onclick = function(){
+          document.querySelector('#navigator').pushPage('album.html');
+        };
+        //カロリータンパク質押下
+        page.querySelector('#nutrition-button').onclick = function(){
+          document.querySelector('#navigator').pushPage('nutrition.html');
+        };
+        //プロフィール押下
+        page.querySelector('#profile-button').onclick = function(){
+          document.querySelector('#navigator').pushPage('profile.html');
+        };
+
+      //スケジュールページの処理
+      } else if (page.matches('#schedule-page')) {
+        //ホームボタン押下
+        page.querySelector('#home-button').onclick = function() {
+          document.querySelector('#navigator').popPage();
+        };
+
+      //目標ページの処理
+      }else if(page.matches('#goal-page')){
+         page.querySelector('#home-button').onclick = function() {
+          document.querySelector('#navigator').popPage();
+        };
+      
+      //ボディチェックページの処理
+      }else if(page.matches('#weight-page')){
+         page.querySelector('#home-button').onclick = function() {
+          document.querySelector('#navigator').popPage();
+        };
+
+      //アルバムページの処理
+      }else if(page.matches('#album-page')){
+         page.querySelector('#home-button').onclick = function() {
+          document.querySelector('#navigator').popPage();
+        };
+
+      //カロリータンパク質ページの処理
+      }else if(page.matches('#nutrition-page')){
+         page.querySelector('#home-button').onclick = function() {
+          document.querySelector('#navigator').popPage();
+        };
+
+      //プロフィールページの処理
+      }else if(page.matches('#profile-page')){
+         page.querySelector('#home-button').onclick = function() {
+          document.querySelector('#navigator').popPage();
+        };
+      }
+    });
+
+    if (ons.platform.isIPhoneX()) {
+      document.documentElement.setAttribute('onsflag-iphonex-portrait', '');
+      document.documentElement.setAttribute('onsflag-iphonex-landscape', '');
+    }
+  </script>
+</head>
+
+
+<!--中身-->
+<body>
+  <ons-navigator id="navigator" page="home.html"></ons-navigator>
+
+  <!--ホーム画面-->
+  <ons-template id="home.html">
+    <ons-page id="home-page">
+      <ons-toolbar>
+        <div class="center">ホーム</div>
+      </ons-toolbar>
+      <div class="content" style="text-align: center">
+        <p>
+          <ons-button id="schedule-button">スケジュール</ons-button>
+          <ons-button id="goal-button">目標管理</ons-button>
+        </p>
+        <p>
+          <ons-button id="weight-button">ボディ<br>チェック</ons-button>
+          <ons-button id="album-button">アルバム</ons-button>
+        </p>
+        <p>
+          <ons-button id="nutrition-button">カロリー<br>タンパク質</ons-button>
+          <ons-button id="profile-button">プロフィール</ons-button>
+        </p>
+      </div>
+    </ons-page>
+  </ons-template>
+
+  <!--スケジュール画面-->
+  <ons-template id="schedule.html">
+    <ons-page id="schedule-page">
+      <ons-toolbar>
+        <div class="left"><ons-back-button>home</ons-back-button></div>
+        <div class="center">スケジュール</div>
+      </ons-toolbar>
+      <div class="content" style="text-align: center">
+        <ons-button id="home-button">ホーム</ons-button>
+      </div>
+    </ons-page>
+  </ons-template>
+
+  <!---目標画面-->
+  <ons-template id="goal.html">
+    <ons-page id="goal-page">
+      <ons-toolbar>
+        <div class="left"><ons-back-button>home</ons-back-button></div>
+        <div class="center">目標</div>
+      </ons-toolbar>
+      <div class="content" style="text-align: center">
+        <ons-button id="home-button">ホーム</ons-button>
+      </div>
+    </ons-page>
+  </ons-template>
+
+  <!---ボディチェック画面-->
+  <ons-template id="weight.html">
+    <ons-page id="weight-page">
+      <ons-toolbar>
+        <div class="left"><ons-back-button>home</ons-back-button></div>
+        <div class="center">ボディチェック</div>
+      </ons-toolbar>
+      <div class="content" style="text-align: center">
+        <ons-button id="home-button">ホーム</ons-button>
+      </div>
+    </ons-page>
+  </ons-template>
+
+  <!---アルバム画面-->
+  <ons-template id="album.html">
+    <ons-page id="album-page">
+      <ons-toolbar>
+        <div class="left"><ons-back-button>home</ons-back-button></div>
+        <div class="center">アルバム</div>
+      </ons-toolbar>
+      <div class="content" style="text-align: center">
+        <ons-button id="home-button">ホーム</ons-button>
+      </div>
+    </ons-page>
+  </ons-template>
+
+  <!---カロリータンパク質画面-->
+  <ons-template id="nutrition.html">
+    <ons-page id="nutrition-page">
+      <ons-toolbar>
+        <div class="left"><ons-back-button>home</ons-back-button></div>
+        <div class="center">カロリータンパク質</div>
+      </ons-toolbar>
+      <div class="content" style="text-align: center">
+        <ons-button id="home-button">ホーム</ons-button>
+      </div>
+    </ons-page>
+  </ons-template>
+
+  <!---プロフィール画面-->
+  <ons-template id="profile.html">
+    <ons-page id="profile-page">
+      <ons-toolbar>
+        <div class="left"><ons-back-button>home</ons-back-button></div>
+        <div class="center">プロフィール</div>
+      </ons-toolbar>
+      <div class="content" style="text-align: center">
+        <ons-button id="home-button">ホーム</ons-button>
+      </div>
+    </ons-page>
+  </ons-template>
+</body>
+</html>
