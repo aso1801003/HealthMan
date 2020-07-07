@@ -13,72 +13,114 @@
 
 <!--処理-->
   <script>
+    //ニフクラ接続
+    var applicationKey = "f5ba5a14acdaedc970aad09cecc9f3017655e4bf75d7d548d3e06df736f6377e";
+    var clientKey = "83154da0be79123a725810f8112a60e333d1cf6ac8e5741d445829bd0f7fda86";
+    var ncmb = new NCMB(applicationKey,clientKey);
+    //各クラスを変数に格納
+    var Profile = ncmb.DataStore("profile");
+    var Goal = ncmb.DataStore("goal");
+    var Nutrition = ncmb.DataStore("nutrition");
+    var Schedule = ncmb.DataStore("schedule");
+    var Weight = ncmb.DataStore("weight");
+
     document.addEventListener('init', function(event) {
       var page = event.target;
 
-      //ホームページの処理
-      if (page.matches('#home-page')) {
-        //スケジュールボタン押下
-        page.querySelector('#schedule-button').onclick = function() {
-          //htmlを表示
-          document.querySelector('#navigator').pushPage('schedule.html');
+      //新規登録ページの処理
+      if (page.matches('#signup-page')) {
+        //新規登録ボタン押下処理
+        page.querySelector('#signup-button').onclick = function(){
+          var user = new ncmb.User();
+          // ユーザー名・パスワードを取得し設定
+          user.set("userName", document.getElementById("username").value)
+              .set("password", document.getElementById("password").value);
+          user.signUpByAccount()
+              .then(function(){
+                // 登録後処理
+                 document.querySelector('#navigator').pushPage('signin.html');
+              })
+              .catch(function(err){
+                // エラー処理
+              });
+          }
+          page.querySelector('#signin-button').onclick = function(){
+            document.querySelector('#navigator').pushPage('signin.html');
+          }
+
+      //ログインページの処理
+      }else if(page.matches('#signin-page')){
+        //ログインボタン押下処理
+         page.querySelector('#signin-button').onclick = function() {
+           //ユーザー名とパスワードでログイン
+          ncmb.User.login(document.getElementById("username").value, document.getElementById("password").value)
+              .then(function(data){
+                // ログイン後処理
+                document.querySelector('#navigator').pushPage('common.html');
+              })
+              .catch(function(err){
+                // エラー処理
+                alert("ユーザー名またはパスワードが違います");
+              });
         };
-        //目標管理押下
-        page.querySelector('#goal-button').onclick = function(){
-          document.querySelector('#navigator').pushPage('goal.html');
+        page.querySelector('#signup-button').onclick = function(){
+            document.querySelector('#navigator').pushPage('signup.html');
+          }
+
+      //目標ページの処理
+      }else if(page.matches('#goal-page')){
+        page.querySelector("ons-back-button").onclick = function () {
+            document.querySelector('#navigator').pushPage('signin.html');
         };
-        //ボディチェック押下
-        page.querySelector('#weight-button').onclick = function(){
-          document.querySelector('#navigator').pushPage('weight.html');
-        };
-        //アルバム押下
-        page.querySelector('#album-button').onclick = function(){
-          document.querySelector('#navigator').pushPage('album.html');
-        };
-        //カロリータンパク質押下
-        page.querySelector('#nutrition-button').onclick = function(){
-          document.querySelector('#navigator').pushPage('nutrition.html');
-        };
-        //プロフィール押下
-        page.querySelector('#profile-button').onclick = function(){
-          document.querySelector('#navigator').pushPage('profile.html');
+        page.querySelector('#home-button').onclick = function() {
+        document.querySelector('#navigator').pushPage('common.html');
         };
 
       //スケジュールページの処理
       } else if (page.matches('#schedule-page')) {
-        //ホームボタン押下
+        page.querySelector("ons-back-button").onclick = function () {
+            document.querySelector('#navigator').pushPage('signin.html');
+        };
         page.querySelector('#home-button').onclick = function() {
-          document.querySelector('#navigator').popPage();
-        };
-
-      //目標ページの処理
-      }else if(page.matches('#goal-page')){
-         page.querySelector('#home-button').onclick = function() {
-          document.querySelector('#navigator').popPage();
-        };
-      
-      //ボディチェックページの処理
-      }else if(page.matches('#weight-page')){
-         page.querySelector('#home-button').onclick = function() {
-          document.querySelector('#navigator').popPage();
+        document.querySelector('#navigator').pushPage('common.html');
         };
 
       //アルバムページの処理
       }else if(page.matches('#album-page')){
-         page.querySelector('#home-button').onclick = function() {
-          document.querySelector('#navigator').popPage();
+         page.querySelector("ons-back-button").onclick = function () {
+            document.querySelector('#navigator').pushPage('signin.html');
         };
+        page.querySelector('#home-button').onclick = function() {
+        document.querySelector('#navigator').pushPage('common.html');
+        };
+      
+      //ボディチェックページの処理
+      }else if(page.matches('#weight-page')){
+        page.querySelector("ons-back-button").onclick = function () {
+            document.querySelector('#navigator').pushPage('signin.html');
+        };
+        page.querySelector("weight-set").onclick = function(){
+          var weight = new Weight;
+          weight.set("weight",document.getElementById("weight").value).save();
+          window.location.reload();
+        }
 
       //カロリータンパク質ページの処理
       }else if(page.matches('#nutrition-page')){
-         page.querySelector('#home-button').onclick = function() {
-          document.querySelector('#navigator').popPage();
+         page.querySelector("ons-back-button").onclick = function () {
+            document.querySelector('#navigator').pushPage('signin.html');
+        };
+        page.querySelector('#home-button').onclick = function() {
+        document.querySelector('#navigator').pushPage('common.html');
         };
 
       //プロフィールページの処理
       }else if(page.matches('#profile-page')){
-         page.querySelector('#home-button').onclick = function() {
-          document.querySelector('#navigator').popPage();
+         page.querySelector("ons-back-button").onclick = function () {
+            document.querySelector('#navigator').pushPage('signin.html');
+        };
+        page.querySelector('#home-button').onclick = function() {
+        document.querySelector('#navigator').pushPage('common.html');
         };
       }
     });
@@ -93,40 +135,60 @@
 
 <!--中身-->
 <body>
-  <ons-navigator id="navigator" page="home.html"></ons-navigator>
+  <!-- 初期ページの設定 -->
+  <!-- page="######.html"の#部分を自分の画面に変更 -->
+  <ons-navigator id="navigator" page="signin.html"></ons-navigator>
 
-  <!--ホーム画面-->
-  <ons-template id="home.html">
-    <ons-page id="home-page">
-      <ons-toolbar>
-        <div class="center">ホーム</div>
-      </ons-toolbar>
-      <div class="content" style="text-align: center">
-        <p>
-          <ons-button id="schedule-button">スケジュール</ons-button>
-          <ons-button id="goal-button">目標管理</ons-button>
-        </p>
-        <p>
-          <ons-button id="weight-button">ボディ<br>チェック</ons-button>
-          <ons-button id="album-button">アルバム</ons-button>
-        </p>
-        <p>
-          <ons-button id="nutrition-button">カロリー<br>タンパク質</ons-button>
-          <ons-button id="profile-button">プロフィール</ons-button>
-        </p>
+  <!-- 共通画面 -->
+  <ons-template id="common.html">
+    <ons-page id="common-page">
+      <ons-tabbar>
+        <ons-tab page="goal.html" icon="fa-flag"></ons-tab>
+        <ons-tab page="schedule.html" icon="fa-calendar"></ons-tab>
+        <ons-tab page="album.html" icon="fa-picture-o"></ons-tab>
+        <ons-tab page="weight.html" icon="fa-line-chart"></ons-tab>
+        <ons-tab page="nutrition.html" icon="fa-cutlery"></ons-tab>
+        <ons-tab page="profile.html" icon="fa-user-circle-o"></ons-tab>
+      </ons-tabbar>
+    </ons-page>
+  </ons-template>
+
+  <!--新規登録画面-->
+  <ons-template id="signup.html">
+    <ons-page id="signup-page">
+      <div class="background" style="background-color: yellow;"></div>
+      <div class="content" style="text-align: center;" >
+        <img src="img/logo.png" style="width:250px; height:250px">
+        <p style="bold; margin-top:30px;font-size:20px">新規登録</p>
+        <div class="signup">
+          <p style="text-align:left; margin-left:85px;">ユーザー名</p>
+          <ons-input id="username" placeholder="username" modifier="underbar" style="background-color:white;"></ons-input>
+          <p style="text-align:left; margin-left:85px">パスワード</p>
+          <ons-input id="password" placeholder="password" modifier="underbar" style="background-color:white"></ons-input><br>
+        </div>
+        <br>
+        <ons-button id="signup-button" style="background-color:white; color:black;border-width:1px">新規登録</ons-button><br>
+        <ons-button id="signin-button" modifier="quiet">ログインはこちら</ons-button>
       </div>
     </ons-page>
   </ons-template>
 
-  <!--スケジュール画面-->
-  <ons-template id="schedule.html">
-    <ons-page id="schedule-page">
-      <ons-toolbar>
-        <div class="left"><ons-back-button>home</ons-back-button></div>
-        <div class="center">スケジュール</div>
-      </ons-toolbar>
-      <div class="content" style="text-align: center">
-        <ons-button id="home-button">ホーム</ons-button>
+  <!--ログイン画面-->
+  <ons-template id="signin.html">
+    <ons-page id="signin-page">
+    <div class="background" style="background-color: yellow;"></div>
+      <div class="content" style="text-align: center;" >
+        <img src="img/logo.png" style="width:250px; height:250px">
+        <p style="bold; margin-top:30px;font-size:20px">ログイン</p>
+        <div class="signup">
+          <p style="text-align:left; margin-left:85px;">ユーザー名</p>
+          <ons-input id="username" placeholder="username" modifier="underbar" style="background-color:white;"></ons-input>
+          <p style="text-align:left; margin-left:85px">パスワード</p>
+          <ons-input id="password" placeholder="password" modifier="underbar" style="background-color:white"></ons-input><br>
+        </div>
+        <br>
+        <ons-button id="signin-button" style="background-color:white; color:black;border-width:1px">ログイン</ons-button><br>
+        <ons-button id="signup-button" modifier="quiet">新規登録はこちら</ons-button>
       </div>
     </ons-page>
   </ons-template>
@@ -135,25 +197,25 @@
   <ons-template id="goal.html">
     <ons-page id="goal-page">
       <ons-toolbar>
-        <div class="left"><ons-back-button>home</ons-back-button></div>
+        <div class="left"><ons-back-button>logout</ons-back-button></div>
         <div class="center">目標</div>
       </ons-toolbar>
-      <div class="content" style="text-align: center">
-        <ons-button id="home-button">ホーム</ons-button>
-      </div>
+      <!-- <div class="content" style="text-align: center">
+      <ons-button id="home-button">新規登録</ons-button>
+      </div> -->
     </ons-page>
   </ons-template>
 
-  <!---ボディチェック画面-->
-  <ons-template id="weight.html">
-    <ons-page id="weight-page">
+  <!--スケジュール画面-->
+  <ons-template id="schedule.html">
+    <ons-page id="schedule-page">
       <ons-toolbar>
-        <div class="left"><ons-back-button>home</ons-back-button></div>
-        <div class="center">ボディチェック</div>
+        <div class="left"><ons-back-button>logout</ons-back-button></div>
+        <div class="center">スケジュール</div>
       </ons-toolbar>
-      <div class="content" style="text-align: center">
+      <!-- <div class="content" style="text-align: center">
         <ons-button id="home-button">ホーム</ons-button>
-      </div>
+      </div> -->
     </ons-page>
   </ons-template>
 
@@ -161,12 +223,26 @@
   <ons-template id="album.html">
     <ons-page id="album-page">
       <ons-toolbar>
-        <div class="left"><ons-back-button>home</ons-back-button></div>
+        <div class="left"><ons-back-button>logout</ons-back-button></div>
         <div class="center">アルバム</div>
       </ons-toolbar>
-      <div class="content" style="text-align: center">
+      <!-- <div class="content" style="text-align: center">
         <ons-button id="home-button">ホーム</ons-button>
-      </div>
+      </div> -->
+    </ons-page>
+  </ons-template>
+
+  <!---ボディチェック画面-->
+  <ons-template id="weight.html">
+    <ons-page id="weight-page">
+      <ons-toolbar>
+        <div class="left"><ons-back-button>logout</ons-back-button></div>
+        <div class="center">ボディチェック</div>
+      </ons-toolbar>
+      体重：<ons-input id="weight" modifier="underbar"></ons-input>
+      <ons-button id="weight-set">設定</ons-button>
+      <p>BMI:</p>
+      <p></p>
     </ons-page>
   </ons-template>
 
@@ -174,12 +250,12 @@
   <ons-template id="nutrition.html">
     <ons-page id="nutrition-page">
       <ons-toolbar>
-        <div class="left"><ons-back-button>home</ons-back-button></div>
+        <div class="left"><ons-back-button>logout</ons-back-button></div>
         <div class="center">カロリータンパク質</div>
       </ons-toolbar>
-      <div class="content" style="text-align: center">
+      <!-- <div class="content" style="text-align: center">
         <ons-button id="home-button">ホーム</ons-button>
-      </div>
+      </div> -->
     </ons-page>
   </ons-template>
 
@@ -187,12 +263,12 @@
   <ons-template id="profile.html">
     <ons-page id="profile-page">
       <ons-toolbar>
-        <div class="left"><ons-back-button>home</ons-back-button></div>
+        <div class="left"><ons-back-button>logout</ons-back-button></div>
         <div class="center">プロフィール</div>
-      </ons-toolbar>
+      <!-- </ons-toolbar>
       <div class="content" style="text-align: center">
         <ons-button id="home-button">ホーム</ons-button>
-      </div>
+      </div> -->
     </ons-page>
   </ons-template>
 </body>
