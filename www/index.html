@@ -69,29 +69,91 @@
 
       //目標ページの処理
       }else if(page.matches('#goal-page')){
+      var currentUser = ncmb.User.getCurrentUser();
+      if (currentUser) { 
         page.querySelector("ons-back-button").onclick = function () {
             document.querySelector('#navigator').pushPage('signin.html');
         };
-        page.querySelector('#home-button').onclick = function() {
-        document.querySelector('#navigator').pushPage('common.html');
+        page.querySelector("#newgoal-button").onclick = function () {
+          document.querySelector('#navigator').pushPage('newgoal.html');
         };
+
+        //一旦カードをすべて消去する
+        var maincont = document.getElementById('goaldiv');
+        if (maincont.hasChildNodes()){
+          for (var i=maincont.childNodes.length-1; i>=0; i--) {
+            maincont.removeChild(maincont.childNodes[i]);
+          }
+        }
+        //flagがfalseのデータを全件取得
+        //【ユーザー絞る】
+        Goal.equalTo("flag", false)
+            .equalTo("user_id",currentUser.get("objectId")
+            .fetchAll()
+          .then(function(results){
+            //取得データがある間
+            for(var i = 0; i < results.length; i++){
+              //カード作成
+              var onscard = document.createElement('ons-card');
+              //pタグ作成
+              var cardp = document.createElement('p');
+              //取得データをpタグに入れる
+              cardp.innerHTML = results[i].goal + results[i].flag; // <- あとで編集
+              //カードの中にpタグを入れる
+              onscard.appendChild(cardp);
+              //ボタンを作成
+              var cardbutton = document.createElement('ons-button');
+              //ボタンの設定
+              cardbutton.setAttribute("modifier","large");
+              //ボタンの文字
+              cardbutton.innerHTML = "完了";
+              //ボタンを押した時の処理
+              cardbutton.onclick = (function(objid){
+              })(results[i].objectId);
+              //カードの中にボタンを入れる
+              onscard.appendChild(cardbutton);
+              //divの中にカードを入れる
+              maincont.appendChild(onscard);
+            }
+          })
+          .catch(function(error){
+            alert("エラーです");
+          });
+      }
+
+      //登録画面の処理
+      } else if (page.matches('#newgoal-page')) {
+        var currentUser = ncmb.User.getCurrentUser();
+        if (currentUser) { 
+        page.querySelector("ons-back-button").onclick = function () {
+            document.querySelector('#navigator').popPage();
+        };
+  
+        page.querySelector("#new-button").onclick = function() {
+            var goal = new Goal;
+            //目標登録
+            goal.set("goal", document.getElementById("target").value)
+                  .set("user_id",currentUser.get("objectId"))
+                  .set("flag",false)
+                  .save();
+            document.querySelector("#navigator").popPage();
+          };
+        }
+      
+
+      
+      
 
       //スケジュールページの処理
       } else if (page.matches('#schedule-page')) {
         page.querySelector("ons-back-button").onclick = function () {
             document.querySelector('#navigator').pushPage('signin.html');
         };
-        page.querySelector('#home-button').onclick = function() {
-        document.querySelector('#navigator').pushPage('common.html');
-        };
 
       //アルバムページの処理
       }else if(page.matches('#album-page')){
          page.querySelector("ons-back-button").onclick = function () {
             document.querySelector('#navigator').pushPage('signin.html');
-        };
-        page.querySelector('#home-button').onclick = function() {
-        document.querySelector('#navigator').pushPage('common.html');
         };
       
       //ボディチェックページの処理
@@ -132,17 +194,11 @@
          page.querySelector("ons-back-button").onclick = function () {
             document.querySelector('#navigator').pushPage('signin.html');
         };
-        page.querySelector('#home-button').onclick = function() {
-        document.querySelector('#navigator').pushPage('common.html');
-        };
 
       //プロフィールページの処理
       }else if(page.matches('#profile-page')){
          page.querySelector("ons-back-button").onclick = function () {
             document.querySelector('#navigator').pushPage('signin.html');
-        };
-        page.querySelector('#home-button').onclick = function() {
-        document.querySelector('#navigator').pushPage('common.html');
         };
       }
     });
@@ -159,7 +215,7 @@
 <body>
   <!-- 初期ページの設定 -->
   <!-- page="######.html"の#部分を自分の画面に変更 -->
-  <ons-navigator id="navigator" page="common.html"></ons-navigator>
+  <ons-navigator id="navigator" page="signin.html"></ons-navigator>
 
   <!-- 共通画面 -->
   <ons-template id="common.html">
@@ -215,17 +271,34 @@
     </ons-page>
   </ons-template>
 
-  <!---目標画面-->
+  <!---目標一覧画面-->
   <ons-template id="goal.html">
     <ons-page id="goal-page">
       <ons-toolbar>
         <div class="left"><ons-back-button>logout</ons-back-button></div>
-        <div class="center">目標</div>
+        <div class="center">目標一覧</div>
       </ons-toolbar>
       <div id="goaldiv">
         
       </div>
       <ons-button id="newgoal-button" style="text-align:center; position: fixed; left:60px; right:60px ;bottom:40px; background-color:#ffff00; color:#000000; border-width:1px;">+目標を追加する</ons-button>
+
+    </ons-page>
+  </ons-template>
+
+  <!-- 目標登録画面 -->
+  <ons-template id="newgoal.html">
+    <ons-page id="newgoal-page">
+      <ons-toolbar>
+        <div class="left"><ons-back-button></ons-back-button></div>
+        <div class="center">目標登録</div>
+      </ons-toolbar>
+
+      <div style="text-align:center; margin-top:150px;">
+      <textarea id="target" class="textarea" rows="3" placeholder="目標を入力" style="height:150px; width:250px; border:1px solid #000000;"></textarea>
+      </div>
+
+      <ons-button id="new-button" style="text-align:center; position: fixed; left:60px; right:60px ;bottom:100px; background-color:#ffff00; color:#000000; border-width:1px;">追加</ons-button>
 
     </ons-page>
   </ons-template>
